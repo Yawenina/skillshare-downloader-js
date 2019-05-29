@@ -12,11 +12,13 @@ const Utils = require('./utils');
 const downloadDir = path.resolve(require('os').homedir(), 'Downloads', 'skillshare');
 
 async function downloader(anwsers) {
-  const { cookie = '', courses } = anwsers;
+  let { cookie = '', courses } = anwsers;
 
   if (cookie) {
     Utils.saveCookie(cookie);
     console.log(chalk.green(`Saved cookie successfully!`));
+  } else {
+    cookie = Utils.readCookie();
   }
 
   const ids = courses.split(',');
