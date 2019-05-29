@@ -8,10 +8,17 @@ const axios = require('axios');
 const fs = require('fs');
 const chalk = require('chalk');
 const path = require('path');
+const Utils = require('./utils');
 const downloadDir = path.resolve(require('os').homedir(), 'Downloads', 'skillshare');
 
 async function downloader(anwsers) {
   const { cookie = '', courses } = anwsers;
+
+  if (cookie) {
+    Utils.saveCookie(cookie);
+    console.log(chalk.green(`Saved cookie successfully!`));
+  }
+
   const ids = courses.split(',');
   // 1. request for course info
   ids.forEach( async (id) => {

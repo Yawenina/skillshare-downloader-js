@@ -3,6 +3,7 @@ const program = require('commander');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 const downloader = require('../src/downloader');
+const Utils = require('../src/utils');
 
 program
   .version(require('../package').version)
@@ -13,27 +14,27 @@ program
   .description('download videos from skillshare')
   .option('-d --dir <path>', 'set video downloading folder')
   .action(() => {
-    // 1. 输入cookie
-    inquirer.prompt([
-      {
+    const questions = [];
+    if (!Utils.hasCookie()) {
+      questions.push({
         name: 'cookie',
         message: 'Input your skillshare cookie:',
         validate(input) {
           return input !== '' ? true : 'Please input your cookie';
         }
-      },
-      {
-        name: 'courses',
-        message: `Input course ids(${chalk.magenta('split your courses ids by ,')})`,
-        validate(input) {
-          return input !== '' ? true : 'Please input course id';
-        }
+      })
+    }
+
+    questions.push({
+      name: 'courses',
+      message: `Input course ids(${chalk.magenta('split your courses ids by ,')})`,
+      validate(input) {
+        return input !== '' ? true : 'Please input course id';
       }
-    ]).then(answers => {
+    });
+    inquirer.prompt(questions).then(answers => {
       downloader(answers);
     })
-    // 2. 输入课程链接
-    // 3. 下载
   });
 
 // required, to pass terminal arguments
