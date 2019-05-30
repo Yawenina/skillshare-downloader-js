@@ -9,11 +9,11 @@ const fs = require('fs');
 const chalk = require('chalk');
 const path = require('path');
 const Utils = require('./utils');
-const downloadDir = path.resolve(require('os').homedir(), 'Downloads', 'skillshare');
 
 async function downloader(anwsers) {
-  let { cookie = '', courses } = anwsers;
-
+  let { cookie = '', courses, output: outputDir } = anwsers;
+  outputDir = path.resolve(outputDir);
+  // get cookie
   if (cookie) {
     Utils.saveCookie(cookie);
     console.log(chalk.green(`Saved cookie successfully!`));
@@ -35,18 +35,18 @@ async function downloader(anwsers) {
 
     // 2. create download folder
     const projectTitle = data.data.title;
-    if (!fs.existsSync(downloadDir)) {
-      fs.mkdirSync(downloadDir);
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir);
     }
     // TODO: escape title what if it has a '/' in title
-    if (!fs.existsSync(`${downloadDir}/${projectTitle}`)) {
-      fs.mkdirSync(`${downloadDir}/${projectTitle}`);
+    if (!fs.existsSync(`${outputDir}/${projectTitle}`)) {
+      fs.mkdirSync(`${outputDir}/${projectTitle}`);
     } else {
-      console.log(chalk.red(`You have already had ${projectTitle} in downloading folder.`));
+      console.log(chalk.red(`You have already had [${projectTitle}] under ${outputDir}.`));
       return;
     }
     const courses = data.data._embedded.units._embedded.units[0]._embedded.sessions._embedded.sessions;
-    console.log(chalk.green(`Start downloading course ${chalk.cyan(projectTitle)}...`));
+    console.log(chalk.green(`Start downloading course ${chalk.cyan(projectTitle)} under ${outputDir}...`));
 
    // 3. fetch download url
     courses.forEach(async (course, idx) => {
@@ -65,7 +65,7 @@ async function downloader(anwsers) {
         console.log(chalk.red(`Cannot find download url for ${course.title} in ${projectTitle}`));
         return;
       } else {
-        const writer = fs.createWriteStream(`${downloadDir}/${projectTitle}/${idx + 1}-${course.title}.mp4`);
+        const writer = fs.createWriteStream(`${outputDir}/${projectTitle}/${idx + 1}-${course.title}.mp4`);
         console.log(chalk.green(`Start downloading course ${chalk.cyan(projectTitle)} ${chalk.cyan(course.title)}...`));
         const res = await axios(downloadUrl, {
           method: 'get',

@@ -1,9 +1,11 @@
 #!/usr/bin/env node
+const path = require('path');
 const program = require('commander');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 const downloader = require('../src/downloader');
 const Utils = require('../src/utils');
+const defaultOutputDir = path.resolve(require('os').homedir(), 'Downloads', 'skillshare');
 
 program
   .version(require('../package').version)
@@ -12,7 +14,7 @@ program
 // 直接敲命令就可以下载
 program
   .description('download videos from skillshare')
-  .option('-d --dir <path>', 'set video downloading folder')
+  .option('-o, --output <path>', 'Downloading directory, default is home/Downloads/skillshare', defaultOutputDir)
   .action(() => {
     const questions = [];
     if (!Utils.hasCookie()) {
@@ -33,7 +35,10 @@ program
       }
     });
     inquirer.prompt(questions).then(answers => {
-      downloader(answers);
+      downloader({
+        ...answers,
+        output: program.output
+      });
     })
   });
 
