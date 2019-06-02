@@ -13,10 +13,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.18.0",
     "chalk": "^2.4.2",
     "commander": "^2.20.0",
+    "draftlog": "^1.0.12",
     "inquirer": "^6.3.1",
-    "npm": "^6.9.0"
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
   }
 }
